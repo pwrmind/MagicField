@@ -1,25 +1,37 @@
-(function (selector) {
-    var subscribers = [];
-    var observers = document.querySelectorAll(selector);
+(function (observersSelector) {
+    var observer;
+    var properties;
+    var rawProperties;
+    var property;
+    var observable;
+    var hendler;
+    var event;
+    var observers = document.querySelectorAll(observersSelector);
 
-    var addSubscribers = function(subscribers) {
-        for (var i in subscribers) {
-            subscribers[i].observable = this;
-            this.subscribers.push(subscribers[i]);
-        }
+    hendler = function() {
+        observer.innerText = observable.value;
     };
 
-    var notifySubscribers = function() {
-        for(var i in this.subscribers) {
-            this.subscribers[i].innerHTML = this.value;
+    for(var i = 0; i < observers.length; i++) {
+        observer = observers[i];
+        rawProperties = observer.getAttribute("data-observer").split(";");
+        properties = {};
+        for(var j = 0; j < rawProperties.length; j++) {
+            property = rawProperties[j].trim().split(":");
+            if(property[0] === "events") {
+                properties[property[0]] = property[1].trim().split(",");
+            } else {
+                properties[property[0]] = property[1];
+            }
         }
-    };
+        console.log(properties);    
+        observable = document.querySelector(properties.observable);
+        console.log(observable);
 
-    element.oninput = this.notifySubscribers;
-
-    return Object.assign(element, this);
+        for(var k = 0; k < properties.events.length; k++) {
+            event = properties.events[k].trim();
+            observable.addEventListener(event, hendler);
+        }
+    }
 })("[data-observer]");
 
-var field_01 = new Field(document.getElementById('field_01'));
-var subscribers = new Field(document.querySelectorAll(".subscribers"));
-field_01.addSubscribers(subscribers);
