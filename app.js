@@ -41,12 +41,12 @@
             self.subscribers.push(subscriber);
         };
 
-        observable.notifySubscribers = observable.notifySubscribers || function(sender) {
+        observable.notifySubscribers = observable.notifySubscribers || function(event) {
             var self = this;
             self.subscribers.forEach(function(subscriber) {
                 var properties = getObserverProperties(subscriber.getAttribute("data-observer").split(";")) || {};
                 if(properties.hendler) {
-                    properties.hendler(self);
+                    properties.hendler(self, event);
                 } else {
                     if(subscriber.tagName == 'INPUT' || subscriber.tagName == 'SELECT'){
                         subscriber.value = self.value;
