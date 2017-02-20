@@ -23,14 +23,6 @@
                 newTodoItem.style.display = "block";
             }            
         }
-        (function(){
-            var dataSet = {};
-            var elementWithId = document.querySelectorAll("[id]");
-            for(var i in elementWithId){
-                dataSet[elementWithId[i].id] = elementWithId[i].dataset;
-            }
-            console.log(dataSet);
-        })();
     </script>
 </body>
 </html>
