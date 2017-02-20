@@ -1,4 +1,4 @@
-(function (observersSelector, hendler) {
+(function (observersSelector, scope) {
     var observer;
     var properties;
     var rawProperties;
@@ -12,11 +12,17 @@
         var property;
 
         for(var j = 0; j < rawProperties.length; j++) {
+            if(rawProperties[j].length === 0)
+                continue;
+
             property = rawProperties[j].trim().split(":");
+            
             if(property[0] === "events") {
                 properties[property[0]] = property[1].trim().split(",");
+            } else if (property[0] === "hendler") {
+                properties[property[0]] = scope[property[1].trim()];
             } else {
-                properties[property[0]] = property[1];
+                properties[property[0]] = property[1].trim();
             }
         }
 
@@ -35,10 +41,19 @@
             self.subscribers.push(subscriber);
         };
 
-        observable.notifySubscribers = observable.notifySubscribers || function(sender) {
+        observable.notifySubscribers = observable.notifySubscribers || function(event) {
             var self = this;
             self.subscribers.forEach(function(subscriber) {
-                hendler(subscriber, self);
+                var properties = getObserverProperties(subscriber.getAttribute("data-observer").split(";")) || {};
+                if(properties.hendler) {
+                    properties.hendler(self, event);
+                } else {
+                    if(subscriber.tagName == 'INPUT' || subscriber.tagName == 'SELECT'){
+                        subscriber.value = self.value;
+                    } else {
+                        subscriber.innerText = self.value;
+                    }
+                }
             });
         };
 
@@ -48,11 +63,4 @@
             observable.addSubscriber(observer);
         }
     }
-})("[data-observer]", function(observer, observable, eventProperties){
-    if(observer.tagName == 'INPUT' || observer.tagName == 'SELECT'){
-        observer.value = observable.value;
-    } else {
-        observer.innerText = observable.value;
-    }
-});
-
+})("[data-observer]", window);
