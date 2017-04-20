@@ -17,6 +17,7 @@
                 console.log("Add new todo...");
                 var newTodoItem= document.querySelector("[data-template='todoItemTemplate']").cloneNode(true);
                 var newTodoText = sender.value;
+                sender.value = "";
                 newTodoItem.textContent = newTodoItem.textContent.replace("[[value]]",newTodoText);
                 var todoList = document.querySelector("#todoList");
                 todoList.appendChild(newTodoItem);
